@@ -20,10 +20,10 @@ spec:
         effect: NoSchedule
       containers:
       - name: flusher
-        image: currycan/cgroup-memory-manager:latest
+        image: currycan/kube-node-memory-flusher:latest
         imagePullPolicy: Always
         command:
-          - cgroup-memory-manager
+          - kube-node-memory-flusher
           - --parent=/host/sys/fs/cgroup/memory/kubepods
           - --threshold=25%
         env:
