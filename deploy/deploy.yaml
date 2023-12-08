@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: memory-flusher
+  namespace: kube-system
+  labels:
+    app: memory-flusher
+spec:
+  selector:
+    matchLabels:
+      app: memory-flusher
+  template:
+    metadata:
+      labels:
+        app: memory-flusher
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: flusher
+        image: currycan/cgroup-memory-manager:latest
+        imagePullPolicy: Always
+        command:
+          - cgroup-memory-manager
+          - --parent=/host/sys/fs/cgroup/memory/kubepods
+          - --threshold=25%
+        env:
+        - name: RUST_LOG
+          value: info
+        resources:
+          limits:
+            cpu: 300m
+            memory: 512Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
+        volumeMounts:
+        - name: sysfs
+          mountPath: /host/sys/fs/cgroup
+        - name: localtime
+          mountPath: /etc/localtime
+      terminationGracePeriodSeconds: 30
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      volumes:
+      - name: sysfs
+        hostPath:
+          path: /sys/fs/cgroup
+      - name: localtime
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai
