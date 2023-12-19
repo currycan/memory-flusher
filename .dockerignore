@@ -1,7 +1,14 @@
+# Directories
 .git
+.github
 .idea
-.gitignore
 deploy
 target
+
+# Files
+.DS_Store
+.gitignore
+.editorconfig
+*.md
+Dockerfile
 LICENSE
-README.md
