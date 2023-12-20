@@ -1,10 +1,10 @@
 FROM messense/rust-musl-cross:x86_64-musl AS builder
 
-WORKDIR /src/kube-node-memory-flusher
+WORKDIR /src
 
 COPY . .
 
-RUN cargo build --release
+RUN cargo install --path=. --bins --root=.
 
 #FROM debian:buster-slim
 FROM scratch
@@ -12,6 +12,6 @@ FROM scratch
 LABEL maintainer="currycan <ansandy@foxmail.com>"
 
 # Copy our build
-COPY --from=builder /src/kube-node-memory-flusher/target/x86_64-unknown-linux-musl/release/kube-node-memory-flusher /usr/bin/
+COPY --from=builder /src/bin/ /usr/bin/
 
 CMD ["kube-node-memory-flusher"]
